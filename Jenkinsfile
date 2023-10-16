@@ -6,19 +6,11 @@ pipeline {
         git branch: 'master', url: 'https://github.com/gariktepanosian/newrepo.git'
       }
     }
-    stage('Build') {
+    stage('Scan') {
       steps {
-        sh 'mvn compile'
-        sh 'mvn test'
+      withSonarQubeEnv(installationName: 'sonarqube')
+        sh './mvnw clean org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.0.2155:sonar'
       }
-    }
-    stage('Deploy') {
-     when {
-                     expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
-                 }
-                 steps {
-                     sh 'deploy-script.sh'
-                 }
     }
   }
 }
